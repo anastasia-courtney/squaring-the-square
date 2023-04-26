@@ -22,7 +22,7 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
         }
     }
     //print width and index of minimum delimited plate
-    //eprintln!("l_min: {}, p_min_i: {}", l_min, p_min_i);
+    eprintln!("l_min: {}, p_min_i: {}", l_min, p_min_i);
     if l_min == config.size {
         if config.plates[p_min_i].height == config.size {
             //we have found a square
@@ -50,10 +50,10 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
         next_plate(config);
         //undo it
         *config = config_backup;
-        //eprintln!("a- {}", config);
+        eprintln!("a- {}", config);
     }
     else{
-        //eprintln!("a.");
+        eprintln!("a.");
     }
     // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
     if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height + config.plates[plate_id].height < config.plates[plate_id].width{
@@ -63,7 +63,7 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
         config.reverse_horizontal_extension(plate_id);
     }
     else{
-        ////eprintln!("b.");
+        eprintln!("b.");
     }
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
@@ -77,10 +77,10 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
             config.remove_square(plate_id);
         }
         else{
-            ////eprintln!("{} is not a valid square size", s)
+            eprintln!("{} is not a valid square size", s)
         }
     }
     //state search space for squares:
-    //eprintln!("c fin, searched 2 to {} squares", std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height));
+    eprintln!("c fin, searched 2 to {} squares", std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height));
     // undo adding the square
 }
