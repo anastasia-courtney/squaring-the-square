@@ -7,6 +7,14 @@ pub fn solve (size: Integer) -> (){
     decompose(&mut config, 1);
 }
 
+pub fn solve_cc(size: Integer) ->(){
+    println!{"Solving for size: {}", size};
+    let mut config = Config::new(size); //Creates the necessary starting plate.
+    println!("Config: {:?}", config);
+    decompose_cc(&mut config, 1);
+
+}
+
 fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and decompose it
     let mut l_min : Integer = config.size + Integer::from(1); //equiv to infinity
     let mut p_min_i : usize = 0;
@@ -80,7 +88,6 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
             ////eprintln!("{} is not a valid square size", s)
         }
     }
-    //state search space for squares:
-    //eprintln!("c fin, searched 2 to {} squares", std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height));
-    // undo adding the square
+
 }
+
