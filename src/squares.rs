@@ -7,14 +7,14 @@ pub type Integer = i32;
 
 #[derive(Clone)]
 pub struct Config {
-    pub squares: HashSet<Integer>,
+    pub squares: Vec<Integer>,
     pub size: Integer,
     pub plates: Vec<Plate>
 }
 
 impl Config{
     pub fn new(size: Integer) -> Self {
-        let mut s = HashSet::new();
+        let s = Vec::new();
         let mut p = Vec::new();
         //First plate: height size + 1, width 1
         p.push(Plate{height: size + 1, width: 1});
@@ -38,7 +38,7 @@ impl Config{
 
     pub fn add_square_quick(&mut self, square: Integer, plate_id: usize) -> () {
         //add_square without merge checks.
-        self.squares.insert(square);
+        self.squares.push(square);
         let original_plate_height = self.plates[plate_id].height;
         self.plates.insert(plate_id, Plate{height: square + original_plate_height, width: square});
         //take the width of the square from the original plate
@@ -48,7 +48,7 @@ impl Config{
 
     pub fn horizontal_extension(&mut self, plate_id: usize) -> () { //extends the plate on the left by adding a square
         let square = self.plates[plate_id - 1].height - self.plates[plate_id].height;
-        self.squares.insert(square);
+        self.squares.push(square);
         self.plates[plate_id - 1].width += square;
         self.plates[plate_id].width -= square;
         ////eprintln!("b+ {}", self);
@@ -56,7 +56,7 @@ impl Config{
 
     pub fn reverse_horizontal_extension(&mut self, plate_id: usize) -> () { //remove extension
         let square = self.plates[plate_id - 1].height - self.plates[plate_id].height;
-        self.squares.remove(&square);
+        self.squares.pop();
         self.plates[plate_id - 1].width -= square;
         self.plates[plate_id].width += square;
         ////eprintln!("b- {}", self);
@@ -64,7 +64,7 @@ impl Config{
 
     pub fn vertical_extension(&mut self,  plate_id: usize) -> () {
         let square = self.plates[plate_id].width;
-        self.squares.insert(square);
+        self.squares.push(square);
         self.plates[plate_id].height += square;
         if self.plates[plate_id].height == self.plates[plate_id + 1].height {
             //merge the two plates:
@@ -82,7 +82,7 @@ impl Config{
     pub fn remove_square(&mut self, plate_id: usize) -> () {
         //remove_square, which makes it's entire own plate, and merges with the next plate
         let square = self.plates[plate_id].width;
-        self.squares.remove(&square);
+        self.squares.pop();
         self.plates.remove(plate_id);
         self.plates[plate_id].width += square;
         ////eprintln!("c- {}", self);
