@@ -6,7 +6,7 @@ fn main() {
     //time the exhaustive search
     //set start time:
     let start = std::time::Instant::now();
-    exhaustive::solve(i32::try_from(40).unwrap());
+    exhaustive::solve(i32::try_from(65).unwrap());
     //set end time:
     let end = std::time::Instant::now();
     //print time elapsed:

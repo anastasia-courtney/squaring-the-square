@@ -43,6 +43,10 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
 }
 
 fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, decompose it by adding squares, then select the next plate if the plates change
+    if config.squares.len() > 1 && config.squares[0] == 18 && config.squares[1] == 15{
+        //println!("config: {:?}", config);
+
+    }
     // if filling the plate with a square does not make the height greater than the size, add the square and then next plate
     if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size{
         let config_backup = config.clone();
@@ -56,7 +60,7 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
         //eprintln!("a.");
     }
     // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
-    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height + config.plates[plate_id].height < config.plates[plate_id].width{
+    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
         config.horizontal_extension(plate_id);
         decompose(config, plate_id);
         //remove the square
@@ -67,7 +71,7 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
     }
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-    for s in 2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1 {
+    for s in 2..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)
         if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
             //print number of plates:
