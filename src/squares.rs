@@ -135,7 +135,11 @@ pub struct Square {
 
 impl Debug for Square {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Square: {:?}", self.squares)
+        let mut s = Vec::new();
+        for i in &self.squares {
+            s.push(i);
+        }
+        write!(f, "Square: {:?}", s)
     }
 }
 
