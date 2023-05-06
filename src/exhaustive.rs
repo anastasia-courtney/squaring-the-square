@@ -243,7 +243,7 @@ pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, 
     
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-    for s in (2..(config.plates[1].width/2 +1)) {
+    for s in (9..(config.plates[1].width/2 +1)) {
         config.add_square_quick(s, 1);
         send.send(Message::WorkUnit((config.clone(), 2))).unwrap();
         config.remove_square(1);
