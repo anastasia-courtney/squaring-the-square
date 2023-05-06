@@ -12,7 +12,7 @@ use crate::squares::*;
 
 pub fn Coordinator(size : Integer) -> () {
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = 1; //available_parallelism().unwrap().get();
+    let NTHREADS = available_parallelism().unwrap().get();
     println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, (thread::JoinHandle<()>, std::sync::mpsc::Sender<()>)> = HashMap::new();
@@ -69,7 +69,7 @@ pub fn Coordinator(size : Integer) -> () {
                             to_co.send(Message::ThreadDeath(i)).unwrap();
                         });
                         threads.insert(i, (new_thread, to_thread));
-                        println!("New thread: {}, threads: {:?}", i, threads.keys());
+                        //println!("New thread: {}, threads: {:?}", i, threads.keys());
                     },
                     //if queue is empty:
                     //   randomly select thread, and send it a message to produce a work unit

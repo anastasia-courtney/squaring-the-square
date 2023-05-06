@@ -17,6 +17,7 @@ pub fn solve_cc(send : &Sender<Message>, rcv : &Receiver<()>, size: Integer) ->(
     let mut config = Config::new(size); //Creates the necessary starting plate.
     println!("Config: {:?}", config);
     initial_SOLVE_decompose_cc(send, rcv, &mut config, 1);
+    //initial_decompose_cc(send, rcv, &mut config, 1);
 }
 
 fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and decompose it
@@ -103,7 +104,7 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
         ////eprintln!("a.");
     }
     // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
-    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height + config.plates[plate_id].height < config.plates[plate_id].width{
+    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
         config.horizontal_extension(plate_id);
         decompose(config, plate_id);
         //remove the square
@@ -114,7 +115,7 @@ fn decompose(config: &mut Config, plate_id: usize) -> () { //given a plate, deco
     }
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-    for s in 2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1 {
+    for s in 2..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)
         if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
             //print number of plates:
@@ -142,7 +143,7 @@ fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut C
                     //eprintln!("a+ {}", config);
                     let config_backup = config.clone();
                     config.vertical_extension(plate_id);
-                    println!("{:?}", config);
+                    //println!("{:?}", config);
                     next_plate_cc(send, rcv, &mut config);
                     //undo it
                     *config = config_backup;
@@ -151,11 +152,11 @@ fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut C
                     ////eprintln!("a.");
                 }
                 // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
-                if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height + config.plates[plate_id].height < config.plates[plate_id].width{
+                if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
                     //eprintln!("b+ {}", config);
 
                     config.horizontal_extension(plate_id);
-                    println!("{:?}", config);
+                    //println!("{:?}", config);
                     decompose_cc(send, rcv, config, plate_id);
                     //remove the square
                     config.reverse_horizontal_extension(plate_id);
@@ -167,12 +168,12 @@ fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut C
                 }
                 // iterate over all possible square sizes that can be added to the bottom left corner.
                 //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-                for s in 2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1 {
+                for s in 2..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
                     // if the square can be added to the bottom left corner, add it and then decompose the new plate)
                     if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
                         //print number of plates:
                         config.add_square_quick(s, plate_id);
-                        println!("{:?}", config);
+                        //println!("{:?}", config);
                         decompose_cc(send, rcv, config, plate_id + 1);
                         //remove the square
                         config.remove_square(plate_id);
@@ -205,7 +206,7 @@ pub fn initial_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config
         ////eprintln!("a.");
     }
     // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
-    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height + config.plates[plate_id].height < config.plates[plate_id].width{
+    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
         //eprintln!("b+ {}", config);
         config.horizontal_extension(plate_id);
         decompose_cc(send, rcv, config, plate_id);
@@ -218,7 +219,7 @@ pub fn initial_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config
     }
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-    for s in 2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1 {
+    for s in 2..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)
         if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
             //print number of plates:
@@ -242,12 +243,12 @@ pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, 
     
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-    for s in 2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1 {
+    for s in (2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)
         if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
             //print number of plates:
             config.add_square_quick(s, plate_id);
-            send.send(Message::WorkUnit((config.clone(), plate_id))).unwrap();
+            send.send(Message::WorkUnit((config.clone(), plate_id + 1))).unwrap();
             config.remove_square(plate_id);
             //eprintln!("{} checked", s);
         }

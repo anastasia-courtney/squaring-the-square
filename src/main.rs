@@ -13,7 +13,7 @@ fn main() {
 
     let queue: Vec<Config> = Vec::new();
 
-    coordinator::Coordinator(33);
+    coordinator::Coordinator(90);
     //exhaustive::solve(i32::try_from(65).unwrap());
     //set end time:
     let end = std::time::Instant::now();
