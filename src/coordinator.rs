@@ -12,8 +12,8 @@ use crate::squares::*;
 
 pub fn Coordinator(size : Integer) -> () {
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = available_parallelism().unwrap().get();
-    println!("Number of threads: {}", NTHREADS);
+    let NTHREADS = 10; //available_parallelism().unwrap().get();
+    //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, (thread::JoinHandle<()>, std::sync::mpsc::Sender<()>)> = HashMap::new();
 
@@ -33,12 +33,12 @@ pub fn Coordinator(size : Integer) -> () {
         let start = std::time::Instant::now();
         solve_cc( &to_co, &rcv_thread, size);
         let end = std::time::Instant::now();
-        println!("Time elapsed: {}ms", (end - start).as_millis());
-        println!("Thread {} disconnecting...", i);
+        //println!("Time elapsed: {}ms", (end - start).as_millis());
+        //println!("Thread {} disconnecting...", i);
         to_co.send(Message::ThreadDeath(i)).unwrap();
     });
     threads.insert(i, (new_thread, to_thread));
-    println!("Solve called, number of threads: {}", threads.len());
+    //println!("Solve called, number of threads: {}", threads.len());
     
     //sleep for a bit:
     //thread::sleep(std::time::Duration::from_millis(300));
@@ -83,9 +83,9 @@ pub fn Coordinator(size : Integer) -> () {
                                 Some((_, to_thread)) => {
                                     //println!("Sending request to thread {}", key);
                                     match to_thread.send(()) {
-                                        Ok(_) => {/*println!("Request sent to: {}", key)*/},
+                                        Ok(_) => {/*//println!("Request sent to: {}", key)*/},
                                                 
-                                        Err(_) => {/*println!("Request failed, thread {} disconnected", key);
+                                        Err(_) => {/*//println!("Request failed, thread {} disconnected", key);
                                                             threads.remove(&key);*/}
                                     }
                                 },

@@ -6,17 +6,17 @@ use crate::coordinator::Message;
 use crate::squares::Config;
 
 pub fn solve (size: Integer) -> (){
-    println!{"Solving for size: {}", size};
+    //println!{"Solving for size: {}", size};
     let mut config = Config::new(size); //Creates the necessary starting plate.
-    println!("Config: {:?}", config);
+    //println!("Config: {:?}", config);
     decompose(&mut config, 1);
 }
 
 pub fn solve_cc(send : &Sender<Message>, rcv : &Receiver<()>, size: Integer) ->(){
-    println!{"Solving for size: {}", size};
+    //println!{"Solving for size: {}", size};
     let mut config = Config::new(size); //Creates the necessary starting plate.
-    println!("Config: {:?}", config);
-    initial_SOLVE_decompose_cc(send, rcv, &mut config, 1);
+    //println!("Config: {:?}", config);
+    initial_SOLVE_decompose_cc(send, rcv, &mut config);
     //initial_decompose_cc(send, rcv, &mut config, 1);
 }
 
@@ -46,7 +46,7 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
             //we have found a rectangle
             //return the rectangle}
             println!("Found a rectangle: {:?}", config);
-            println!("continuing search...");
+            //println!("continuing search...");
             decompose(config, p_min_i);
         }
     }
@@ -75,13 +75,13 @@ fn next_plate_cc(send : &Sender<Message>, rcv: &Receiver<()>, config: &mut Confi
         if config.plates[p_min_i].height == config.size {
             //we have found a square
             //return the square and 
-            println!("Found a square: {:?}", config);
+            //println!("Found a square: {:?}", config);
         }
         else {
             //we have found a rectangle
             //return the rectangle}
-            println!("Found a rectangle: {:?}", config);
-            println!("continuing search...");
+            //println!("Found a rectangle: {:?}", config);
+            //println!("continuing search...");
             decompose_cc(send, rcv, config, p_min_i);
         }
     }
@@ -237,23 +237,17 @@ pub fn initial_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config
 }
 }
 
-pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config: &mut Config, plate_id: usize) -> (){
+pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config: &mut Config) -> (){
 
     { 
     
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
-    for s in (2..std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
-        // if the square can be added to the bottom left corner, add it and then decompose the new plate)
-        if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
-            //print number of plates:
-            config.add_square_quick(s, plate_id);
-            send.send(Message::WorkUnit((config.clone(), plate_id + 1))).unwrap();
-            config.remove_square(plate_id);
-            //eprintln!("{} checked", s);
-        }
-        else{
-        }
+    for s in (2..(config.plates[1].width/2 +1)) {
+        config.add_square_quick(s, 1);
+        send.send(Message::WorkUnit((config.clone(), 2))).unwrap();
+        config.remove_square(1);
+        //eprintln!("{} checked", s);
     }
     //println!("Initial decompose finished");
 

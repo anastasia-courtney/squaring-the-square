@@ -9,14 +9,15 @@ fn main() {
     println!("Hello, world!");
     //time the exhaustive search
     //set start time:
-    let start = std::time::Instant::now();
+    let mut start: std::time::Instant = std::time::Instant::now();
+    let mut end = std::time::Instant::now();
 
-    let queue: Vec<Config> = Vec::new();
+    for s in 1..100 {
+        let size = s;
+        start = std::time::Instant::now();
+        coordinator::Coordinator(size);
+        end = std::time::Instant::now();
+        println!("{}: {}", size, (end - start).as_millis());
 
-    coordinator::Coordinator(90);
-    //exhaustive::solve(i32::try_from(65).unwrap());
-    //set end time:
-    let end = std::time::Instant::now();
-    //print time elapsed:
-    println!("Time elapsed: {}ms", (end - start).as_millis());
+    }
 }
