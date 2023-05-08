@@ -275,7 +275,7 @@ pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, 
 pub fn double_nest_init(send: &Sender<Message>, rcv: &Receiver<()>, config: &mut Config) -> () {
     let mut i = 1;
     //start time:
-    let mut start: std::time::Instant = std::time::Instant::now();
+    //let mut start: std::time::Instant = std::time::Instant::now();
     for s1 in (9..(config.plates[1].width/2+1)){
         config.add_square_quick(s1, 1);
 
@@ -309,6 +309,6 @@ pub fn double_nest_init(send: &Sender<Message>, rcv: &Receiver<()>, config: &mut
     }
     //end time:
     //println!("{} work units produced", i);
-    let end = std::time::Instant::now();
+    ////let end = std::time::Instant::now();
     //println!("Time elapsed producing units: {}ms", (end - start).as_millis());
 }

@@ -30,9 +30,9 @@ pub fn Coordinator(size : Integer) -> () {
     let (to_thread, rcv_thread) = channel::<()>();
     let to_co = to_coord.clone();
     let new_thread = thread::spawn(move || {
-        let start = std::time::Instant::now();
+        //let start = std::time::Instant::now();
         solve_cc( &to_co, &rcv_thread, size);
-        let end = std::time::Instant::now();
+        //let end = std::time::Instant::now();
         //println!("Time elapsed: {}ms", (end - start).as_millis());
         //println!("Thread {} disconnecting...", i);
         to_co.send(Message::ThreadDeath(i)).unwrap();
@@ -91,14 +91,14 @@ pub fn Coordinator(size : Integer) -> () {
                         i += 1;
                         let u = unit.clone();
                         let (to_thread, rcv_thread) = channel::<()>();
-                        let to_co = to_coord.clone();
+                        let to_co: std::sync::mpsc::Sender<Message> = to_coord.clone();
                         let new_thread = thread::spawn(move || {
                             //time the lifetime of the thread:
-                            let start = std::time::Instant::now();
+                            //let start = std::time::Instant::now();
                             let (mut config, plate_id) = u;
                             //initial_decompose_cc(&to_co, &rcv_thread, &mut config, plate_id);
                             decompose(&mut config, plate_id);
-                            let end = std::time::Instant::now();
+                            //let end = std::time::Instant::now();
                             //println!("Time elapsed: {}ms", (end - start).as_millis());
                             to_co.send(Message::ThreadDeath(i)).unwrap();
                         });
