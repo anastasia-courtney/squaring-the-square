@@ -96,7 +96,8 @@ pub fn Coordinator(size : Integer) -> () {
                             //time the lifetime of the thread:
                             let start = std::time::Instant::now();
                             let (mut config, plate_id) = unit;
-                            initial_decompose_cc(&to_co, &rcv_thread, &mut config, plate_id);
+                            //initial_decompose_cc(&to_co, &rcv_thread, &mut config, plate_id);
+                            decompose(&mut config, plate_id);
                             let end = std::time::Instant::now();
                             //println!("Time elapsed: {}ms", (end - start).as_millis());
                             to_co.send(Message::ThreadDeath(i)).unwrap();
