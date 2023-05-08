@@ -11,7 +11,7 @@ fn main() {
     let mut start: std::time::Instant = std::time::Instant::now();
     let mut end = std::time::Instant::now();
 
-    for s in 60..100 {
+    for s in 60..120 {
         let size = s;
         start = std::time::Instant::now();
         coordinator::Coordinator(size);

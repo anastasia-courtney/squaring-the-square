@@ -92,7 +92,7 @@ fn next_plate_cc(send : &Sender<Message>, rcv: &Receiver<()>, config: &mut Confi
 
 pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a plate, decompose it by adding squares, then select the next plate if the plates change
     // if filling the plate with a square does not make the height greater than the size, add the square and then next plate
-    if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size{
+    if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size&&  (if plate_id == config.plates.len()-2 {config.plates[plate_id].width >= 5} else {true}){
         //eprintln!("a+ {}", config);
         let config_backup = config.clone();
         config.vertical_extension(plate_id);
@@ -122,7 +122,7 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
 
-    let min = if (config.plates[plate_id].height == 0 || plate_id == 1 || plate_id == config.plates.len() - 2) {5} else {2};
+    let min = if (config.plates[plate_id].height == 0 || plate_id == 1) {5} else {2};
 
     for s in min..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)
@@ -151,7 +151,7 @@ fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut C
         Err(_) => {
 
             // if filling the plate with a square does not make the height greater than the size, add the square and then next plate
-            if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size{
+            if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size && (if plate_id == config.plates.len()-2 {config.plates[plate_id].width >= 5} else {true}){
                 //eprintln!("a+ {}", config);
                 let config_backup = config.clone();
                 config.vertical_extension(plate_id);
@@ -181,7 +181,7 @@ fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut C
             // iterate over all possible square sizes that can be added to the bottom left corner.
             //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
         
-            let min = if (config.plates[plate_id].height == 0 || plate_id == 1 || plate_id == config.plates.len() - 2) {5} else {2};
+            let min = if (config.plates[plate_id].height == 0 || plate_id == 1) {5} else {2};
 
             for s in min..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
                 // if the square can be added to the bottom left corner, add it and then decompose the new plate)
@@ -208,7 +208,7 @@ pub fn initial_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config
     //given a plate, decompose it by adding squares, then select the next plate if the plates change
     // if filling the plate with a square does not make the height greater than the size, add the square and then next plate
 
-    if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size{
+    if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size && (if plate_id == config.plates.len()-2 {config.plates[plate_id].width >= 5} else {true}){
         //eprintln!("a+ {}", config);
         let config_backup = config.clone();
         config.vertical_extension(plate_id);
@@ -235,7 +235,7 @@ pub fn initial_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config
     // iterate over all possible square sizes that can be added to the bottom left corner.
     //println!("{} to {}", 2, std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height) + 1);
     
-    let min = if (config.plates[plate_id].height == 0 || plate_id == 1 || plate_id == config.plates.len() - 2) {5} else {2};
+    let min = if (config.plates[plate_id].height == 0 || plate_id == 1) {5} else {2};
 
     for s in min..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)

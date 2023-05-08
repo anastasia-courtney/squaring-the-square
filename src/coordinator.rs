@@ -139,6 +139,9 @@ pub fn Coordinator(size : Integer) -> () {
         //That thread will still send a message, to die.
         //therefore it is safe to wait for a message.
 
+        //little sleep:
+        thread::sleep(std::time::Duration::from_millis(10));
+
         let m = rcv_coord.recv().unwrap();
         match m {
             Message::ThreadDeath(index) => {
