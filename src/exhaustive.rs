@@ -16,7 +16,7 @@ pub fn solve_cc(send : &Sender<Message>, rcv : &Receiver<()>, size: Integer) ->(
     //println!{"Solving for size: {}", size};
     let mut config = Config::new(size); //Creates the necessary starting plate.
     //println!("Config: {:?}", config);
-    initial_SOLVE_decompose_cc(send, rcv, &mut config);
+    double_nest_init(send, rcv, &mut config);
     //initial_decompose_cc(send, rcv, &mut config, 1);
 }
 
@@ -40,12 +40,12 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
         if config.plates[p_min_i].height == config.size {
             //we have found a square
             //return the square and 
-            println!("Found a square: {:?}", config);
+            //println!("Found a square: {:?}", config);
         }
         else {
             //we have found a rectangle
             //return the rectangle}
-            println!("Found a rectangle: {:?}", config);
+            //println!("Found a rectangle: {:?}", config);
             //println!("continuing search...");
             decompose(config, p_min_i);
         }
@@ -259,4 +259,45 @@ pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, 
     //println!("Initial decompose finished");
 
 }
+}
+
+pub fn double_nest_init(send: &Sender<Message>, rcv: &Receiver<()>, config: &mut Config) -> () {
+    let mut i = 1;
+    //start time:
+    let mut start: std::time::Instant = std::time::Instant::now();
+    for s1 in (9..(config.plates[1].width/2+1)){
+        config.add_square_quick(s1, 1);
+
+            for s2 in 5..((config.plates[2].width - 9) + 1){
+                if s2 != s1 {
+                    config.add_square_quick(s2, 2);
+                        if s2 > s1 && s1 < config.plates[3].width {
+                            send.send(Message::WorkUnit((config.clone(), 1))).unwrap();
+                        }
+                        else {
+                            send.send(Message::WorkUnit((config.clone(), 3))).unwrap();
+                        }
+                    i+=1;
+                    config.remove_square(2);
+                }
+            }
+            let s2 = config.plates[2].width;
+            if s2 != s1 {
+                let mut c = config.clone();
+                c.vertical_extension(2);
+                    if s1 > s2 {
+                        send.send(Message::WorkUnit((c, 2))).unwrap();
+                    }
+                    else{
+                        send.send(Message::WorkUnit((c, 1))).unwrap();
+                    }
+                    i+=1;
+            }
+
+        config.remove_square(1);
+    }
+    //end time:
+    //println!("{} work units produced", i);
+    let end = std::time::Instant::now();
+    //println!("Time elapsed producing units: {}ms", (end - start).as_millis());
 }

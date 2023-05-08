@@ -6,13 +6,12 @@ mod concurrency_dummy;
 mod coordinator;
 
 fn main() {
-    println!("Hello, world!");
     //time the exhaustive search
     //set start time:
     let mut start: std::time::Instant = std::time::Instant::now();
     let mut end = std::time::Instant::now();
 
-    for s in 90..130 {
+    for s in 60..100 {
         let size = s;
         start = std::time::Instant::now();
         coordinator::Coordinator(size);

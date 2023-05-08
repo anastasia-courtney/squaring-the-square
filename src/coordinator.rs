@@ -41,7 +41,40 @@ pub fn Coordinator(size : Integer) -> () {
     //println!("Solve called, number of threads: {}", threads.len());
     
     //sleep for a bit:
-    //thread::sleep(std::time::Duration::from_millis(300));
+    thread::sleep(std::time::Duration::from_millis(10));
+
+    let m = rcv_coord.recv().unwrap();
+        match m {
+            Message::ThreadDeath(index) => {
+                //println!("Thread {} disconnected", index);
+                threads.remove(&index);
+                //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
+            },
+            Message::WorkUnit(unit) => {
+                //add to queue:
+                queue.push(unit);
+                //println!("Work unit recieved, queue length: {}", queue.len());
+            },
+        }
+        
+        for received in rcv_coord.try_iter() {
+            match received {
+                Message::ThreadDeath(index) => {
+                    //println!("Thread {} disconnected", index);
+                    threads.remove(&index);
+                    //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
+                },
+                Message::WorkUnit(unit) => {
+                    //add to queue:
+                    queue.push(unit);
+                    //println!("Work unit recieved, queue length: {}", queue.len());
+                },
+                _ => {
+                    //println!("Message recieved: unknown");
+                }
+            }
+        }
+    //println!("Work units: {}", queue.len());
 
     //While there is more than one thread:
     while threads.len() > 0 || queue.len() > 0 {
@@ -73,7 +106,7 @@ pub fn Coordinator(size : Integer) -> () {
                     },
                     //if queue is empty:
                     //   randomly select thread, and send it a message to produce a work unit
-                    None => {
+                    None => {} /*
                         //randomly select a key from threads:
                         let k = threads.keys().cloned().collect::<Vec<usize>>();
                         if k.len() > 0 {
@@ -96,7 +129,7 @@ pub fn Coordinator(size : Integer) -> () {
                                 }
                             }
                         }
-                    },
+                    },*/
                 }
             }
         }
