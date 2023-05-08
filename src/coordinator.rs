@@ -95,7 +95,7 @@ pub fn Coordinator(size : Integer) -> () {
                         let new_thread = thread::spawn(move || {
                             //time the lifetime of the thread:
                             let start = std::time::Instant::now();
-                            let (mut config, plate_id) = unit;
+                            let (mut config, plate_id) = u;
                             //initial_decompose_cc(&to_co, &rcv_thread, &mut config, plate_id);
                             decompose(&mut config, plate_id);
                             let end = std::time::Instant::now();
