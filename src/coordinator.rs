@@ -7,10 +7,15 @@ use std::thread::available_parallelism;
 use crate::squares::Config;
 use crate::exhaustive::*;
 use crate::squares::*;
+use std::fs::File;
+use std::io::Write;
+
 //import Integer
 
 
 pub fn Coordinator(size : Integer) -> () {
+
+    let start = std::time::Instant::now();
     let (to_coord, rcv_coord) = channel();
     let NTHREADS = 10; //available_parallelism().unwrap().get();
     //println!("Number of threads: {}", NTHREADS);
@@ -77,14 +82,14 @@ pub fn Coordinator(size : Integer) -> () {
     //println!("Work units: {}", queue.len());
 
     //While there is more than one thread:
-    while threads.len() > 0 || queue.len() > 0 {
+    while queue.len() > 0 {
         //println!("Number of threads: {}, workunits: {}", threads.len(), queue.len());
         //if there could be more threads:
         if threads.len() < NTHREADS {
             //println!("Number of threads: {}, workunits: {}", threads.len(), queue.len());
             for _ in 0..(NTHREADS - threads.len()) {
             //println!("Queue length: {}", queue.len());
-                match queue.pop() {
+                match queue.pop() { //TODO: change this to finite length
                     //if queue is not empty:
                     Some(unit) => {
                         //create a new thread:
@@ -140,24 +145,13 @@ pub fn Coordinator(size : Integer) -> () {
         //therefore it is safe to wait for a message.
 
         //little sleep:
-        thread::sleep(std::time::Duration::from_millis(10));
+        //thread::sleep(std::time::Duration::from_millis(10));
 
-        let m = rcv_coord.recv().unwrap();
-        match m {
-            Message::ThreadDeath(index) => {
-                //println!("Thread {} disconnected", index);
-                threads.remove(&index);
-                //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
-            },
-            Message::WorkUnit(unit) => {
-                //add to queue:
-                queue.push(unit);
-                //println!("Work unit recieved, queue length: {}", queue.len());
-            },
-        }
-        
-        for received in rcv_coord.try_iter() {
-            match received {
+
+
+        if queue.len() != 0{
+            let m = rcv_coord.recv().unwrap();
+            match m {
                 Message::ThreadDeath(index) => {
                     //println!("Thread {} disconnected", index);
                     threads.remove(&index);
@@ -168,13 +162,48 @@ pub fn Coordinator(size : Integer) -> () {
                     queue.push(unit);
                     //println!("Work unit recieved, queue length: {}", queue.len());
                 },
-                _ => {
-                    //println!("Message recieved: unknown");
+            }
+            for received in rcv_coord.try_iter() {
+                match received {
+                    Message::ThreadDeath(index) => {
+                        //println!("Thread {} disconnected", index);
+                        threads.remove(&index);
+                        //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
+                    },
+                    /*Message::WorkUnit(unit) => {
+                        //add to queue:
+                        queue.push(unit);
+                        println!("Work unit recieved, queue length: {}", queue.len());
+                    }*/
+                    _ => {
+                        println!("Message recieved: unknown");
+                    }
                 }
             }
         }
     }
+    let mut f = File::options().append(true).open("timings.txt").unwrap();
+    write!(&mut f, "{} {}", size, (std::time::Instant::now() - start).as_millis()).unwrap();
     
+    if threads.len() != 10 {
+        for _ in 0..(10 - threads.len()) {
+            write!(&mut f, " {}", (std::time::Instant::now() - start).as_millis()).unwrap();
+        }
+    }
+    while threads.len() > 0 {
+        match rcv_coord.recv().unwrap() {
+            Message::ThreadDeath(index) => {
+                //println!("Thread {} disconnected", index);
+                threads.remove(&index);
+            },
+            _ => {
+                println!("Message recieved: unknown");
+            }
+        }
+        write!(&mut f, " {}", (std::time::Instant::now() - start).as_millis()).unwrap();
+
+    }
+    writeln!(&mut f, "").unwrap();
 }
 
 

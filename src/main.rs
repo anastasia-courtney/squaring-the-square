@@ -1,4 +1,5 @@
 use crate::squares::Config;
+use std::fs::File;
 
 mod squares;
 mod exhaustive;
@@ -8,15 +9,12 @@ mod coordinator;
 fn main() {
     //time the exhaustive search
     //set start time:
-    let mut start: std::time::Instant = std::time::Instant::now();
-    let mut end = std::time::Instant::now();
+    //create a file for the output:
+    let mut file = File::create("output.txt").unwrap();
+    let mut file = File::create("timings.txt").unwrap();
 
-    for s in 60..120 {
+    for s in 32..120 {
         let size = s;
-        start = std::time::Instant::now();
         coordinator::Coordinator(size);
-        end = std::time::Instant::now();
-        println!("{}: {}", size, (end - start).as_millis());
-
     }
 }

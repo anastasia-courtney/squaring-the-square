@@ -1,9 +1,12 @@
 use crate::squares::*;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use crate::coordinator::Message;
+use std::io::Write;
 
 //import config
 use crate::squares::Config;
+use std::fs::{self, File};
+
 
 pub fn solve (size: Integer) -> (){
     //println!{"Solving for size: {}", size};
@@ -37,15 +40,33 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
     //print width and index of minimum delimited plate
     ////eprintln!("l_min: {}, p_min_i: {}", l_min, p_min_i);
     if l_min == config.size {
+        let mut f = File::options().append(true).open("output.txt").unwrap();
         if config.plates[p_min_i].height == config.size {
             //we have found a square
             //return the square and 
-            //println!("Found a square: {:?}", config);
+            //create a string of ("Found a square, width: {}, height: {}, squares: ", config.size, config.plates[p_min_i].height + config.squares:
+            let mut s = String::new();
+            s += "S, W: ";
+            s += &config.size.to_string();
+            s += ", H: ";
+            s += &config.plates[p_min_i].height.to_string();
+            s += ", SET: ";
+            s += &config.squares_to_string();
+            writeln!(&mut f, "{}", s).unwrap();
         }
         else {
             //we have found a rectangle
             //return the rectangle}
-            //println!("Found a rectangle: {:?}", config);
+            //create a string of ""Found a rectangle, width: {}, height: {}, squares: ", config.size, config.plates[p_min_i].height, );
+            // config.print_squares();
+            let mut s = String::new();
+            s += "R, W: ";
+            s += &config.size.to_string();
+            s += ", H: ";
+            s += &config.plates[p_min_i].height.to_string();
+            s += ", SET: ";
+            s += &config.squares_to_string();
+            writeln!(&mut f, "{}", s).unwrap();
             //println!("continuing search...");
             decompose(config, p_min_i);
         }

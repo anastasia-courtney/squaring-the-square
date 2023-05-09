@@ -89,6 +89,38 @@ impl Config{
         ////eprintln!("c- {}", self);
 
     }
+    
+    pub fn print_squares(&self) -> () {
+        let mut s = String::new();
+        s += "{";
+        for i in 0..128 {
+            if self.squares[i] {
+                s += &i.to_string();
+                s += ", ";
+            }
+        }
+        //remove last two elements in squares_out:
+        s.pop();
+        s.pop();
+        s += "}";
+        println!("{}", s);
+    }
+
+    pub fn squares_to_string(&self) -> String {
+        let mut s = String::new();
+        s += "{";
+        for i in 0..128 {
+            if self.squares[i] {
+                s += &i.to_string();
+                s += ", ";
+            }
+        }
+        //remove last two elements in squares_out:
+        s.pop();
+        s.pop();
+        s += "}";
+        s
+    }
 }
 
 impl Debug for Config{
