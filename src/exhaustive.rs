@@ -128,12 +128,14 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
     // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
     if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
         //eprintln!("b+ {}", config);
+        let config_backup = config.clone();
 
         config.horizontal_extension(plate_id);
         //println!("{:?}", config);
         decompose(config, plate_id);
         //remove the square
-        config.reverse_horizontal_extension(plate_id);
+        //config.reverse_horizontal_extension(plate_id);
+        *config = config_backup;
         //eprintln!("b- {}", config);
 
     }
@@ -148,12 +150,17 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
     for s in min..(std::cmp::min(config.plates[plate_id].width - 1, config.size - config.plates[plate_id].height)+1) {
         // if the square can be added to the bottom left corner, add it and then decompose the new plate)
         if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
-            //print number of plates:
+            //print number of plates:        
+            let config_backup = config.clone();
+
             config.add_square_quick(s, plate_id);
             //println!("{:?}", config);
-            decompose(config, plate_id + 1);
+            next_plate(&mut config);
+            //undo it
+            *config = config_backup;
+            //decompose(config, plate_id + 1);
             //remove the square
-            config.remove_square(plate_id);
+            //config.remove_square(plate_id);
             //println!("{} checked", s);
         }
         else{
