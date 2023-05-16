@@ -15,8 +15,11 @@ fn main() {
     let start = std::time::Instant::now();
     let mut squares_placed = 0;
 
+    squares_placed = coordinator::coordinator_continuous(30, 80);
 
+    /*
     for s in 30..80 {
+
         let start_s = std::time::Instant::now();
         let size = s;
         let squares_placed_s = coordinator::Coordinator(size);
@@ -26,6 +29,7 @@ fn main() {
         //println!("time {} {}", size, (end_s - start_s).as_millis());
         //println!("Squares/millis: {}", squares_placed_s / (end_s - start_s).as_millis());
     }
+    */
     let end = std::time::Instant::now();
     println!("{}", ((end- start).as_millis()));
     println!("Squares (total): {}", squares_placed);

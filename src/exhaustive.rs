@@ -15,11 +15,11 @@ pub fn solve (size: Integer) -> (){
     decompose(&mut config, 1);
 }
 
-pub fn solve_cc(send : &Sender<Message>, rcv : &Receiver<()>, size: Integer) ->(){
+pub fn solve_cc(send : &Sender<Message>, size: Integer) ->(){
     //println!{"Solving for size: {}", size};
     let mut config = Config::new(size); //Creates the necessary starting plate.
     //println!("Config: {:?}", config);
-    double_nest_init(send, rcv, &mut config);
+    double_nest_init(send, &mut config);
     //initial_SOLVE_decompose_cc(send, rcv, &mut config);
 }
 
@@ -312,7 +312,7 @@ pub fn initial_SOLVE_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, 
 }
 }
 
-pub fn double_nest_init(send: &Sender<Message>, rcv: &Receiver<()>, config: &mut Config) -> () {
+pub fn double_nest_init(send: &Sender<Message>,  config: &mut Config) -> () {
     let mut i = 1;
     //start time:
     //let mut start: std::time::Instant = std::time::Instant::now();
