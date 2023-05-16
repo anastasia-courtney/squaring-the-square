@@ -13,11 +13,21 @@ fn main() {
     let mut file = File::create("output.txt").unwrap();
     let mut file = File::create("timings.txt").unwrap();
     let start = std::time::Instant::now();
+    let mut squares_placed = 0;
+    println!("Test");
 
 
-    for s in 32..70 {
+    for s in 30..80 {
+        let start_s = std::time::Instant::now();
         let size = s;
-        coordinator::Coordinator(size);
+        let squares_placed_s = coordinator::Coordinator(size);
+        squares_placed += squares_placed_s;
+        //println!("Total squares placed: {}", squares_placed);
+        let end_s = std::time::Instant::now();
+        println!("time {} {}", size, (end_s - start_s).as_millis());
+        //println!("Squares/millis: {}", squares_placed_s / (end_s - start_s).as_millis());
     }
-    println!("{}", ((std::time::Instant::now() - start).as_millis()));
+    let end = std::time::Instant::now();
+    println!("{}", ((end- start).as_millis()));
+    println!("Squares/millis (total): {}", squares_placed / (end - start).as_millis());
 }

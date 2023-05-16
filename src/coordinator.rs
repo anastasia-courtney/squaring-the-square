@@ -13,11 +13,11 @@ use std::io::Write;
 //import Integer
 
 
-pub fn Coordinator(size : Integer) -> () {
+pub fn Coordinator(size : Integer) -> (u128) {
 
     let start = std::time::Instant::now();
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = 10; //available_parallelism().unwrap().get();
+    let NTHREADS = 75; //available_parallelism().unwrap().get();
     //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, (thread::JoinHandle<()>, std::sync::mpsc::Sender<()>)> = HashMap::new();
@@ -27,6 +27,7 @@ pub fn Coordinator(size : Integer) -> () {
 
     //threadcount:
     let mut i = 0;
+    let mut total_squares = 0;
 
     //random number generator:
     let mut rng = rand::thread_rng();
@@ -40,7 +41,7 @@ pub fn Coordinator(size : Integer) -> () {
         //let end = std::time::Instant::now();
         //println!("Time elapsed: {}ms", (end - start).as_millis());
         //println!("Thread {} disconnecting...", i);
-        to_co.send(Message::ThreadDeath(i)).unwrap();
+        to_co.send(Message::ThreadDeath(i, 0)).unwrap();
     });
     threads.insert(i, (new_thread, to_thread));
     //println!("Solve called, number of threads: {}", threads.len());
@@ -50,9 +51,10 @@ pub fn Coordinator(size : Integer) -> () {
 
     let m = rcv_coord.recv().unwrap();
         match m {
-            Message::ThreadDeath(index) => {
+            Message::ThreadDeath(index, squares_placed) => {
                 //println!("Thread {} disconnected", index);
                 threads.remove(&index);
+                total_squares += squares_placed;
                 //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
             },
             Message::WorkUnit(unit) => {
@@ -64,9 +66,10 @@ pub fn Coordinator(size : Integer) -> () {
         
         for received in rcv_coord.try_iter() {
             match received {
-                Message::ThreadDeath(index) => {
+                Message::ThreadDeath(index, squares_placed) => {
                     //println!("Thread {} disconnected", index);
                     threads.remove(&index);
+                    total_squares += squares_placed;
                     //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
                 },
                 Message::WorkUnit(unit) => {
@@ -105,7 +108,7 @@ pub fn Coordinator(size : Integer) -> () {
                             decompose(&mut config, plate_id);
                             //let end = std::time::Instant::now();
                             //println!("Time elapsed: {}ms", (end - start).as_millis());
-                            to_co.send(Message::ThreadDeath(i)).unwrap();
+                            to_co.send(Message::ThreadDeath(i, config.net_squares)).unwrap();
                         });
                         threads.insert(i, (new_thread, to_thread));
                         //println!("New thread: {}, threads: {:?}", i, threads.keys());
@@ -152,8 +155,9 @@ pub fn Coordinator(size : Integer) -> () {
         if queue.len() != 0{
             let m = rcv_coord.recv().unwrap();
             match m {
-                Message::ThreadDeath(index) => {
+                Message::ThreadDeath(index, squares_placed) => {
                     //println!("Thread {} disconnected", index);
+                    total_squares += squares_placed;
                     threads.remove(&index);
                     //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
                 },
@@ -165,8 +169,9 @@ pub fn Coordinator(size : Integer) -> () {
             }
             for received in rcv_coord.try_iter() {
                 match received {
-                    Message::ThreadDeath(index) => {
+                    Message::ThreadDeath(index, squares_placed) => {
                         //println!("Thread {} disconnected", index);
+                        total_squares += squares_placed;
                         threads.remove(&index);
                         //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
                     },
@@ -185,16 +190,17 @@ pub fn Coordinator(size : Integer) -> () {
     let mut f = File::options().append(true).open("timings.txt").unwrap();
     write!(&mut f, "{} {}", size, (std::time::Instant::now() - start).as_millis()).unwrap();
     
-    if threads.len() != 10 {
-        for _ in 0..(10 - threads.len()) {
+    if threads.len() != NTHREADS {
+        for _ in 0..(NTHREADS - threads.len()) {
             write!(&mut f, " {}", (std::time::Instant::now() - start).as_millis()).unwrap();
         }
     }
     while threads.len() > 0 {
         match rcv_coord.recv().unwrap() {
-            Message::ThreadDeath(index) => {
+            Message::ThreadDeath(index, squares_placed) => {
                 //println!("Thread {} disconnected", index);
                 threads.remove(&index);
+                total_squares += squares_placed;
             },
             _ => {
                 println!("Message recieved: unknown");
@@ -204,10 +210,12 @@ pub fn Coordinator(size : Integer) -> () {
 
     }
     writeln!(&mut f, "").unwrap();
+    println!("sp {} {}", size, total_squares);
+    total_squares
 }
 
 
 pub enum Message {
-    ThreadDeath(usize),
+    ThreadDeath(usize, u128),
     WorkUnit((Config, usize)),
 }

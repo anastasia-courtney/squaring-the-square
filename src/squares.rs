@@ -9,7 +9,8 @@ pub type Integer = i32;
 pub struct Config {
     pub squares: [bool; 128],
     pub size: Integer,
-    pub plates: Vec<Plate>
+    pub plates: Vec<Plate>,
+    pub net_squares: u128
 }
 
 impl Config{
@@ -25,7 +26,8 @@ impl Config{
         Self {
             squares: s,
             size: size,
-            plates: p
+            plates: p,
+            net_squares: 0
         }
     }
 
