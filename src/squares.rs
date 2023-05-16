@@ -123,6 +123,16 @@ impl Config{
         s += "}";
         s
     }
+
+    pub fn order(&self) -> usize {
+        let mut order = 0;
+        for i in 0..128{
+            if self.squares[i]{
+                order += 1;
+            }
+        }
+        order
+    }
 }
 
 impl Debug for Config{

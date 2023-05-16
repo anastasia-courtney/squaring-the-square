@@ -210,7 +210,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
 
     }
     writeln!(&mut f, "").unwrap();
-    println!("sp {} {}", size, total_squares);
+    //println!("sp {} {}", size, total_squares);
     total_squares
 }
 

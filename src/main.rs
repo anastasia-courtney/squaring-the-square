@@ -14,7 +14,6 @@ fn main() {
     let mut file = File::create("timings.txt").unwrap();
     let start = std::time::Instant::now();
     let mut squares_placed = 0;
-    println!("Test");
 
 
     for s in 30..80 {
@@ -24,10 +23,10 @@ fn main() {
         squares_placed += squares_placed_s;
         //println!("Total squares placed: {}", squares_placed);
         let end_s = std::time::Instant::now();
-        println!("time {} {}", size, (end_s - start_s).as_millis());
+        //println!("time {} {}", size, (end_s - start_s).as_millis());
         //println!("Squares/millis: {}", squares_placed_s / (end_s - start_s).as_millis());
     }
     let end = std::time::Instant::now();
     println!("{}", ((end- start).as_millis()));
-    println!("Squares/millis (total): {}", squares_placed / (end - start).as_millis());
+    println!("Squares (total): {}", squares_placed);
 }

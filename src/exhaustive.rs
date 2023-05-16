@@ -50,6 +50,8 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
             s += &config.size.to_string();
             s += ", H: ";
             s += &config.plates[p_min_i].height.to_string();
+            s += ", ORDER: ";
+            s += &config.order().to_string();
             s += ", SET: ";
             s += &config.squares_to_string();
             writeln!(&mut f, "{}", s).unwrap();
@@ -64,6 +66,8 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
             s += &config.size.to_string();
             s += ", H: ";
             s += &config.plates[p_min_i].height.to_string();
+            s += ", ORDER: ";
+            s += &config.order().to_string();
             s += ", SET: ";
             s += &config.squares_to_string();
             writeln!(&mut f, "{}", s).unwrap();
@@ -113,7 +117,7 @@ fn next_plate_cc(send : &Sender<Message>, rcv: &Receiver<()>, config: &mut Confi
 
 pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a plate, decompose it by adding squares, then select the next plate if the plates change
     // if filling the plate with a square does not make the height greater than the size, add the square and then next plate
-    //println!("decomposing, config: {}, plate_id: {}, net_squares: {}", config, plate_id, config.net_squares);
+    //exprintln!("decomposing, config: {}, plate_id: {}, net_squares: {}", config, plate_id, config.net_squares);
     if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size &&  (if plate_id == config.plates.len()-2 {config.plates[plate_id].width >= 5} else {true}){
         config.net_squares += 1;
         //eprintln!("a+ {}", config);
@@ -328,6 +332,7 @@ pub fn double_nest_init(send: &Sender<Message>, rcv: &Receiver<()>, config: &mut
                     config.remove_square(2);
                 }
             }
+            //MY BOUND, to implement comment out
             let s2 = config.plates[2].width;
             if s2 != s1 {
                 let mut c = config.clone();
