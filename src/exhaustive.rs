@@ -121,6 +121,7 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
     if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size &&  (if plate_id == config.plates.len()-2 {config.plates[plate_id].width >= 5} else {true}){
         config.net_squares += 1;
         //eprintln!("a+ {}", config);
+        
         let mut config_backup = config.clone();
         config.vertical_extension(plate_id);
         //println!("{:?}", config);
@@ -183,6 +184,7 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
 }
 
 fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut Config, plate_id: usize) -> (){
+    /* reimplement if needed
     match rcv.try_recv() {
         Ok(_) => {
             //println!("Work unit produced: {}, plate: {}", config, plate_id);
@@ -240,6 +242,7 @@ fn decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, mut config: &mut C
             }
         }
     }
+    */
 }
 
 pub fn initial_decompose_cc(send : &Sender<Message>, rcv : &Receiver<()>, config: &mut Config, plate_id: usize) -> (){
@@ -332,7 +335,8 @@ pub fn double_nest_init(send: &Sender<Message>,  config: &mut Config) -> () {
                     config.remove_square(2);
                 }
             }
-            //MY BOUND, to implement comment out
+            //MY BOUND, to implement comment out 
+            /*
             let s2 = config.plates[2].width;
             if s2 != s1 {
                 let mut c = config.clone();
@@ -344,7 +348,7 @@ pub fn double_nest_init(send: &Sender<Message>,  config: &mut Config) -> () {
                         send.send(Message::WorkUnit((c, 1))).unwrap();
                     }
                     i+=1;
-            }
+            } */
 
         config.remove_square(1);
     }
