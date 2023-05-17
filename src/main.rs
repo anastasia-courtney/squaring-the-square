@@ -10,15 +10,15 @@ fn main() {
     //time the exhaustive search
     //set start time:
     //create a file for the output:
-    let mut file = File::create("output.txt").unwrap();
-    let mut file = File::create("timings.txt").unwrap();
+    let mut file = File::create("output-170523.txt").unwrap();
+    let mut file = File::create("timings-170523.txt").unwrap();
     let start = std::time::Instant::now();
     let mut squares_placed = 0;
 
-    squares_placed = coordinator::coordinator_continuous(30, 80);
+    //squares_placed = coordinator::coordinator_continuous(80, 82);
 
-    /*
-    for s in 30..80 {
+    
+     for s in 80..83 {
 
         let start_s = std::time::Instant::now();
         let size = s;
@@ -29,7 +29,7 @@ fn main() {
         //println!("time {} {}", size, (end_s - start_s).as_millis());
         //println!("Squares/millis: {}", squares_placed_s / (end_s - start_s).as_millis());
     }
-    */
+    
     let end = std::time::Instant::now();
     println!("{}", ((end- start).as_millis()));
     println!("Squares (total): {}", squares_placed);

@@ -17,7 +17,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
 
     let start = std::time::Instant::now();
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = 75; //available_parallelism().unwrap().get();
+    let NTHREADS = 10; //available_parallelism().unwrap().get();
     //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, thread::JoinHandle<()>> = HashMap::new();
@@ -81,7 +81,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
                 }
             }
         }
-    //println!("Work units: {}", queue.len());
+    println!("Work units: {}", queue.len());
 
     //While there is more than one thread:
     while queue.len() > 0 {
@@ -186,7 +186,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
             }
         }
     }
-    let mut f = File::options().append(true).open("timings.txt").unwrap();
+    let mut f = File::options().append(true).open("timings-170523.txt").unwrap();
     write!(&mut f, "{} {}", size, (std::time::Instant::now() - start).as_millis()).unwrap();
     
     if threads.len() != NTHREADS {
@@ -213,7 +213,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
     total_squares
 }
 
-
+#[derive(Debug)]
 pub enum Message {
     ThreadDeath(usize, u128),
     WorkUnit((Config, usize)),
@@ -224,7 +224,7 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
     let mut size = min_size;
     let mut total_squares = 0;
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = 75; //available_parallelism().unwrap().get();
+    let NTHREADS = 10; //available_parallelism().unwrap().get();
     //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, Integer> = HashMap::new();
@@ -233,8 +233,12 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
     let mut queue: Vec<(Config, usize)> = Vec::new();
     //threadcount:
     let mut i = 0;
+    let mut f = File::options().append(true).open("timings-170523.txt").unwrap();
+
     while size <= max_size{
         println!("{} start {}", size, (std::time::Instant::now() - start).as_millis());
+        writeln!(&mut f, "{} start {}", size, (std::time::Instant::now() - start).as_millis()).unwrap();
+
 
     
         //random number generator:
@@ -253,14 +257,53 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
         threads.insert(i, size);
         //println!("Solve called, number of threads: {}", threads.len());
         
+
         //sleep for a bit:
         thread::sleep(std::time::Duration::from_millis(10));
     
         let m = rcv_coord.recv().unwrap();
-            match m {
+        //println!("Message recieved: {:?}", m);
+        match m {
+            Message::ThreadDeath(index, squares_placed) => {
+                //println!("Thread {} disconnected", index);
+                let s = threads.get(&index).unwrap().clone();
+                threads.remove(&index);
+                if s < size {
+                    if !threads.values().any(|&val| val == s){
+                        writeln!(&mut f, "{} end {}", s, (std::time::Instant::now() - start).as_millis()).unwrap();
+                        println!("{} end {}", s, (std::time::Instant::now() - start).as_millis());
+                    }
+                    else{
+                        //println!("TODO threads still working on size {}", s);
+                    }
+                }
+                total_squares += squares_placed;
+                //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
+            },
+            Message::WorkUnit(unit) => {
+                //add to queue:
+                queue.push(unit);
+                //println!("Work unit recieved, queue length: {}", queue.len());
+            },
+        }
+            
+        for received in rcv_coord.try_iter() {
+            //println!("Message recieved: {:?}", received);
+            match received {
                 Message::ThreadDeath(index, squares_placed) => {
                     //println!("Thread {} disconnected", index);
+                    //println!("Threads {:?}", threads);
+                    let s = threads.get(&index).unwrap().clone();
                     threads.remove(&index);
+                    if s < size {
+                        if !threads.values().any(|&val| val == s){
+                            writeln!(&mut f, "{} end {}", s, (std::time::Instant::now() - start).as_millis()).unwrap();
+                            println!("{} end {}", s, (std::time::Instant::now() - start).as_millis());
+                        }
+                        else{
+                            //println!("TODO threads still working on size {}", s);
+                        }
+                    }
                     total_squares += squares_placed;
                     //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
                 },
@@ -269,27 +312,12 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
                     queue.push(unit);
                     //println!("Work unit recieved, queue length: {}", queue.len());
                 },
-            }
-            
-            for received in rcv_coord.try_iter() {
-                match received {
-                    Message::ThreadDeath(index, squares_placed) => {
-                        //println!("Thread {} disconnected", index);
-                        threads.remove(&index);
-                        total_squares += squares_placed;
-                        //println!("Number of threads: {}, work units: {}", threads.len(), queue.len());
-                    },
-                    Message::WorkUnit(unit) => {
-                        //add to queue:
-                        queue.push(unit);
-                        //println!("Work unit recieved, queue length: {}", queue.len());
-                    },
-                    _ => {
-                        //println!("Message recieved: unknown");
-                    }
+                _ => {
+                    //println!("Message recieved: unknown");
                 }
             }
-        //println!("Work units: {}", queue.len());
+        }
+        println!("Work units: {}", queue.len());
     
         //While there is more than one thread:
         while queue.len() > 0 {
@@ -303,7 +331,6 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
                         //if queue is not empty:
                         Some(unit) => {
                             //create a new thread:
-                            i += 1;
                             let u = unit.clone();
                             let to_co: std::sync::mpsc::Sender<Message> = to_coord.clone();
                             threads.insert(i, u.0.size);
@@ -315,8 +342,10 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
                                 decompose(&mut config, plate_id);
                                 //let end = std::time::Instant::now();
                                 //println!("Time elapsed: {}ms", (end - start).as_millis());
+                                //println!("Thread {} disconnecting...", i);
                                 to_co.send(Message::ThreadDeath(i, config.net_squares)).unwrap();
                             });
+                            i += 1;
                             //println!("New thread: {}, threads: {:?}", i, threads.keys());
                         },
                         //if queue is empty:
@@ -360,14 +389,17 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
     
             if queue.len() != 0{
                 let m = rcv_coord.recv().unwrap();
+                //println!("Message recieved: {:?}", m);
                 match m {
                     Message::ThreadDeath(index, squares_placed) => {
                         //println!("Thread {} disconnected", index);
+                        //println!("Threads {:?}", threads);
                         total_squares += squares_placed;
                         let s = threads.get(&index).unwrap().clone();
                         threads.remove(&index);
                         if s < size {
                             if !threads.values().any(|&val| val == s){
+                                writeln!(&mut f, "{} end {}", s, (std::time::Instant::now() - start).as_millis()).unwrap();
                                 println!("{} end {}", s, (std::time::Instant::now() - start).as_millis());
                             }
                             else{
@@ -383,15 +415,17 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
                     },
                 }
                 for received in rcv_coord.try_iter() {
+                    //println!("Message recieved: {:?}", received);
                     match received {
                         Message::ThreadDeath(index, squares_placed) => {
-                            //println!("Threads: {:?}", threads);
                             //println!("Thread {} disconnected", index);
+                            //println!("Threads {:?}", threads);
                             total_squares += squares_placed;
                             let s = threads.get(&index).unwrap().clone();
                             threads.remove(&index);
                             if s < size {
                                 if !threads.values().any(|&val| val == s){
+                                    writeln!(&mut f, "{} end {}", s, (std::time::Instant::now() - start).as_millis()).unwrap();
                                     println!("{} end {}", s, (std::time::Instant::now() - start).as_millis());
                                 }
                                 else{
@@ -412,6 +446,7 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
                 }
             }
         } 
+        writeln!(&mut f, "{} queueempty {}", size, (std::time::Instant::now() - start).as_millis()).unwrap();
         println!("{} queueempty {}", size, (std::time::Instant::now() - start).as_millis());
         
         if size == max_size {
@@ -419,9 +454,11 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
                 match rcv_coord.recv().unwrap() {
                     Message::ThreadDeath(index, squares_placed) => {
                         //println!("Thread {} disconnected", index);
+                        //println!("Threads {:?}", threads);
                         let s = threads.get(&index).unwrap().clone();
                         threads.remove(&index);
                         if !threads.values().any(|&val| val == s){
+                            writeln!(&mut f, "{} end {}", s, (std::time::Instant::now() - start).as_millis()).unwrap();
                             println!("{} end {}", s, (std::time::Instant::now() - start).as_millis());
                         }
                         else{
