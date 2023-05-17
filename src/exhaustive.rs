@@ -137,15 +137,15 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
     if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
         config.net_squares += 1;
         //eprintln!("b+ {}", config);
-        let mut config_backup = config.clone();
+        //let mut config_backup = config.clone();
 
         config.horizontal_extension(plate_id);
         //println!("{:?}", config);
         decompose(config, plate_id);
         //remove the square
-        //config.reverse_horizontal_extension(plate_id);
-        config_backup.net_squares = config.net_squares;
-        *config = config_backup;
+        config.reverse_horizontal_extension(plate_id);
+        //config_backup.net_squares = config.net_squares;
+        //*config = config_backup;
         //eprintln!("b- {}", config);
 
     }
@@ -162,17 +162,17 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
         if config.has_no(s) && s != config.plates[plate_id-1].height - config.plates[plate_id].height{
             config.net_squares += 1;
             //print number of plates:        
-            let mut config_backup = config.clone();
+            //let mut config_backup = config.clone();
 
             config.add_square_quick(s, plate_id);
             //println!("{:?}", config);
             next_plate(&mut config);
-            //undo it
-            config_backup.net_squares = config.net_squares;
-            *config = config_backup;
             //decompose(config, plate_id + 1);
+            //undo it
+            //config_backup.net_squares = config.net_squares;
+            //*config = config_backup;
             //remove the square
-            //config.remove_square(plate_id);
+            config.remove_square(plate_id);
             //println!("{} checked", s);
         }
         else{

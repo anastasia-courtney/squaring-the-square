@@ -15,10 +15,10 @@ fn main() {
     let start = std::time::Instant::now();
     let mut squares_placed = 0;
 
-    //squares_placed = coordinator::coordinator_continuous(80, 82);
+    //squares_placed = coordinator::coordinator_continuous(80, 100);
 
     
-     for s in 80..83 {
+    for s in 83..85 {
 
         let start_s = std::time::Instant::now();
         let size = s;
