@@ -118,6 +118,7 @@ fn next_plate_cc(send : &Sender<Message>, rcv: &Receiver<()>, config: &mut Confi
 pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a plate, decompose it by adding squares, then select the next plate if the plates change
     // if filling the plate with a square does not make the height greater than the size, add the square and then next plate
     //exprintln!("decomposing, config: {}, plate_id: {}, net_squares: {}", config, plate_id, config.net_squares);
+
     if config.has_no(config.plates[plate_id].width) && config.plates[plate_id].height + config.plates[plate_id].width <= config.size &&  (if plate_id == config.plates.len()-2 {config.plates[plate_id].width >= 5} else {true}){
         config.net_squares += 1;
         //eprintln!("a+ {}", config);
@@ -135,7 +136,7 @@ pub fn decompose(mut config: &mut Config, plate_id: usize) -> () { //given a pla
         ////eprintln!("a.");
     }
     // if the height separating the plate from the one to it's left is less than the length, extend the left plate horizontally by adding the square
-    if config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) && config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width{
+    if config.plates[plate_id - 1].height - config.plates[plate_id].height < config.plates[plate_id].width && config.has_no(config.plates[plate_id - 1].height - config.plates[plate_id].height) {
         config.net_squares += 1;
         //eprintln!("b+ {}", config);
         //let mut config_backup = config.clone();
@@ -348,7 +349,8 @@ pub fn double_nest_init(send: &Sender<Message>,  config: &mut Config) -> () {
                         send.send(Message::WorkUnit((c, 1))).unwrap();
                     }
                     i+=1;
-            } */
+            }*/
+            
 
         config.remove_square(1);
     }

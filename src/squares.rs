@@ -7,7 +7,7 @@ pub type Integer = i32;
 
 #[derive(Clone)]
 pub struct Config {
-    pub squares: [bool; 128],
+    pub squares: [bool; 256],
     pub size: Integer,
     pub plates: Vec<Plate>,
     pub net_squares: u128
@@ -15,7 +15,7 @@ pub struct Config {
 
 impl Config{
     pub fn new(size: Integer) -> Self {
-        let mut s = [false; 128];
+        let mut s = [false; 256];
         let mut p = Vec::new();
         //First plate: height size + 1, width 1
         p.push(Plate{height: size + 1, width: 1});
@@ -111,7 +111,7 @@ impl Config{
     pub fn squares_to_string(&self) -> String {
         let mut s = String::new();
         s += "{";
-        for i in 0..128 {
+        for i in 0..256 {
             if self.squares[i] {
                 s += &i.to_string();
                 s += ", ";
@@ -126,7 +126,7 @@ impl Config{
 
     pub fn order(&self) -> usize {
         let mut order = 0;
-        for i in 0..128{
+        for i in 0..256{
             if self.squares[i]{
                 order += 1;
             }
