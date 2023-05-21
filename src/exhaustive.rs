@@ -40,7 +40,7 @@ fn next_plate(config: &mut Config) -> () { //find smallest delimited plate, and 
     //print width and index of minimum delimited plate
     ////eprintln!("l_min: {}, p_min_i: {}", l_min, p_min_i);
     if l_min == config.size {
-        let mut f = File::options().append(true).open("output-170523.txt").unwrap();
+        let mut f = File::options().append(true).open("output-210523.txt").unwrap();
         if config.plates[p_min_i].height == config.size {
             //we have found a square
             //return the square and 

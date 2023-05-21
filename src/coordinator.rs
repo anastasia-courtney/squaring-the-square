@@ -186,7 +186,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
             }
         }
     }
-    let mut f = File::options().append(true).open("timings-170523.txt").unwrap();
+    let mut f = File::options().append(true).open("timings-180523.txt").unwrap();
     write!(&mut f, "{} {}", size, (std::time::Instant::now() - start).as_millis()).unwrap();
     
     if threads.len() != NTHREADS {
@@ -225,6 +225,7 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
     let mut total_squares = 0;
     let (to_coord, rcv_coord) = channel();
     let NTHREADS = 10; //available_parallelism().unwrap().get();
+    let mut file = File::create("timings-".to_owned() + &min_size.to_string()+ " to " + &max_size.to_string() + ".txt").unwrap();
     //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, Integer> = HashMap::new();
@@ -233,7 +234,7 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
     let mut queue: Vec<(Config, usize)> = Vec::new();
     //threadcount:
     let mut i = 0;
-    let mut f = File::options().append(true).open("timings-170523.txt").unwrap();
+    let mut f = File::options().append(true).open("timings-".to_owned() + &min_size.to_string()+ " to " + &max_size.to_string() + ".txt").unwrap();
 
     while size <= max_size{
         println!("{} start {}", size, (std::time::Instant::now() - start).as_millis());
@@ -476,5 +477,6 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
 
         size += 1;
     }
+    writeln!(&mut f, "{} to {} squares {}", min_size, max_size, total_squares).unwrap();
     total_squares
 }

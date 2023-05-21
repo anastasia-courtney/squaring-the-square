@@ -95,7 +95,7 @@ impl Config{
     pub fn print_squares(&self) -> () {
         let mut s = String::new();
         s += "{";
-        for i in 0..128 {
+        for i in 0..256 {
             if self.squares[i] {
                 s += &i.to_string();
                 s += ", ";
@@ -138,7 +138,7 @@ impl Config{
 impl Debug for Config{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut squares_out : String = "{".to_string();
-        for i in 0..128 {
+        for i in 0..256 {
             if self.squares[i] {
                 squares_out += &i.to_string();
                 squares_out += ", ";
@@ -156,7 +156,7 @@ impl Debug for Config{
 impl Display for Config{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut squares_out : String = "{".to_string();
-        for i in 0..128 {
+        for i in 0..256 {
             if self.squares[i] {
                 squares_out += &i.to_string();
                 squares_out += ", ";
