@@ -10,11 +10,11 @@ fn main() {
     //time the exhaustive search
     //set start time:
     //create a file for the output:
-    let mut file = File::create("output-210523.txt").unwrap();
+    let mut file = File::create("output-230523.txt").unwrap();
     let start = std::time::Instant::now();
     let mut squares_placed = 0;
 
-    squares_placed = coordinator::coordinator_continuous(141, 143);
+    squares_placed = coordinator::coordinator_continuous(144, 145);
 
     /* 
      for s in 80..86 {
