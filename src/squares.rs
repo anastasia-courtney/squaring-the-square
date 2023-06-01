@@ -99,6 +99,21 @@ impl RestrictedConfig{
         self.available_squares.insert(square);
 
     }
+
+    pub fn squares_string(&self) -> String {
+        
+        let mut s = String::new();
+        s += "{";
+        for sq in &self.squares {
+                s += &sq.to_string();
+                s += ", ";
+        }
+        //remove last two elements in squares_out:
+        s.pop();
+        s.pop();
+        s += "}";
+        s
+    }
 }
 
 

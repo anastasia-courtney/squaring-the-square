@@ -391,18 +391,41 @@ fn next_plate_restricted(config: &mut RestrictedConfig) -> () { //find smallest 
             p_min_i = i;
         }
     }
+    
     //print width and index of minimum delimited plate
     ////eprintln!("l_min: {}, p_min_i: {}", l_min, p_min_i);
     if l_min == config.size {
+        let mut f = File::options().append(true).open("Gambini_Code_149+.txt").unwrap();
+
         if config.plates[p_min_i].height == config.size {
             //we have found a square
-            //return the square and 
-            println!("Found a square: {:?}", config);
+                //return the square and 
+            let mut s = String::new();
+
+            s += "S, W: ";
+            s += &config.size.to_string();
+            s += ", H: ";
+            s += &config.plates[p_min_i].height.to_string();
+            s += ", ORDER: ";
+            s += &config.squares.len().to_string();
+            s += ", GC: ";
+            s += &config.squares_string();
+            writeln!(&mut f, "{}", s).unwrap();
         }
         else {
             //we have found a rectangle
             //return the rectangle}
-            println!("Found a rectangle: {:?}", config);
+            let mut s = String::new();
+
+            s += "R, W: ";
+            s += &config.size.to_string();
+            s += ", H: ";
+            s += &config.plates[p_min_i].height.to_string();
+            s += ", ORDER: ";
+            s += &config.squares.len().to_string();
+            s += ", GC: ";
+            s += &config.squares_string();
+            writeln!(&mut f, "{}", s).unwrap();
             //println!("continuing search...");
             decompose_restricted(config, p_min_i);
         }
