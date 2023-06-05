@@ -14,7 +14,7 @@ fn main() {
     let start = std::time::Instant::now();
     let mut squares_placed = 0;
 
-    squares_placed = coordinator::coordinator_continuous(147, 148);
+    squares_placed = coordinator::coordinator_continuous(111, 112);
 
     /* 
      for s in 80..86 {
