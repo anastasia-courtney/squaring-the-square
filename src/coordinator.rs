@@ -17,7 +17,7 @@ pub fn Coordinator(size : Integer) -> (u128) {
 
     let start = std::time::Instant::now();
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = 10; //available_parallelism().unwrap().get();
+    let NTHREADS = 75; //available_parallelism().unwrap().get();
     //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
     let mut threads: HashMap<usize, thread::JoinHandle<()>> = HashMap::new();
@@ -224,7 +224,7 @@ pub fn coordinator_continuous(min_size : Integer, max_size : Integer) -> u128{
     let mut size = min_size;
     let mut total_squares = 0;
     let (to_coord, rcv_coord) = channel();
-    let NTHREADS = 10; //available_parallelism().unwrap().get();
+    let NTHREADS = 75; //available_parallelism().unwrap().get();
     let mut file = File::create("timings-".to_owned() + &min_size.to_string()+ " to " + &max_size.to_string() + ".txt").unwrap();
     //println!("Number of threads: {}", NTHREADS);
     //create an hashmap that contains tuples of threads and senders:
