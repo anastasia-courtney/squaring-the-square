@@ -1,1 +1,6 @@
 /target
+/output files
+*.bkp
+*.dtmp
+.DS_Store
+ac2154-submission.zip
