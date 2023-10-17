@@ -1,8 +1,8 @@
 # squaring-the-square
 
-This project, submitted in partial fulfillment of the requirements for the Computer Science Tripos, is an effort to reduce the computational complexity to exhaustively Squaring the Square (and rectangles).
+This project, submitted in partial fulfillment of the requirements for the Computer Science Tripos, is an effort to reduce the computational complexity to exhaustively Square the Square (and rectangles).
 
-Squaring Squares and Rectangles describes decomposing them into distinct integer squares. Ian Gambini's 1999 work presented the first algorithm to produce SPSRs and SPSSs exhaustively, and in this project significant refactoring of the algorithm lead to a significant exponential reduction in complexity. Additionally, the new algorithm was parallelised to take advantage of modern machines.
+Squaring Squares and Rectangles describes decomposing them into distinct integer squares. Ian Gambini's 1999 work presented the first algorithm to produce SPSRs and SPSSs exhaustively, and in this project significant refactoring of the algorithm lead to an exponential reduction in complexity. Additionally, the new algorithm was parallelised to take advantage of modern machines.
 
 [The complete write-up is included, with intent to publish in the coming year.](./AC_MEng_Dissertation.pdf)
 
